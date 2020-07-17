@@ -1,18 +1,10 @@
 package connect4
 
-import kotlin.math.max
-
-class Board(val numCols: Int, val numRows: Int, prepopulatedBoard: Array<CharArray>? = null) {
+class Board(val numCols: Int, val numRows: Int) {
     private enum class Players(val token: Char) { X('X'), Y('Y') }
     private var turn: Players = Players.X
     private var lastPlayed: Pair<Int, Int> = Pair(0, 0)
-    private val _board: Array<CharArray> = if (prepopulatedBoard == null)
-        Array(numCols) { CharArray(numRows) { '.' } }
-    else {
-        if (prepopulatedBoard.size != numCols || prepopulatedBoard.all { it.size != numRows })
-            throw BoardParameterMismatchException("Given board does not match given parameters")
-        prepopulatedBoard
-    }
+    private val _board: Array<CharArray> = Array(numCols) { CharArray(numRows) { '.' } }
     val board: List<List<Char>>
         get() = _board.map { it.toList() }
 
