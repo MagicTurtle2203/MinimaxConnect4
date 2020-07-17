@@ -1,7 +1,7 @@
 package connect4
 
 class Board(private val numRows: Int, private val numCols: Int) {
-    private enum class Players { X, Y }
+    private enum class Players(val token: Char) { X('X'), Y('Y') }
     private var turn: Players = Players.X
     val board: Array<CharArray> = Array(numCols) { CharArray(numRows) { ' ' } }
 
@@ -18,11 +18,11 @@ class Board(private val numRows: Int, private val numCols: Int) {
             board[colNumber][index] = when (turn) {
                 Players.X -> {
                     turn = Players.Y
-                    'X'
+                    Players.X.token
                 }
                 Players.Y -> {
                     turn = Players.X
-                    'Y'
+                    Players.Y.token
                 }
             }
         }
