@@ -333,4 +333,140 @@ class TestBoard {
         b.drop(6)
         Assertions.assertEquals(Pair(true, 'Y'), b.checkWinner())
     }
+
+    @Test
+    fun testBoardFindsWinnerLeftDiagonalX1() {
+        val b = arrayOf(
+                charArrayOf('.', '.', '.', 'Y', 'X', 'Y'),
+                charArrayOf('.', '.', '.', 'X', 'Y', 'X'),
+                charArrayOf('.', '.', '.', '.', 'X', 'Y'),
+                charArrayOf('.', '.', '.', '.', '.', 'X'),
+                charArrayOf('.', '.', '.', '.', '.', 'Y'),
+                charArrayOf('.', '.', '.', '.', '.', '.'),
+                charArrayOf('.', '.', '.', '.', '.', '.')
+        )
+        val board = Board(7, 6, b)
+        board.drop(0)
+        Assertions.assertEquals(Pair(true, 'X'), board.checkWinner())
+    }
+
+    @Test
+    fun testBoardFindsWinnerLeftDiagonalX2() {
+        val b = arrayOf(
+                charArrayOf('.', '.', 'X', 'Y', 'X', 'Y'),
+                charArrayOf('.', '.', '.', 'X', 'Y', 'X'),
+                charArrayOf('.', '.', '.', '.', 'X', 'Y'),
+                charArrayOf('.', '.', '.', '.', '.', '.'),
+                charArrayOf('.', '.', '.', '.', '.', 'Y'),
+                charArrayOf('.', '.', '.', '.', '.', '.'),
+                charArrayOf('.', '.', '.', '.', '.', '.')
+        )
+        val board = Board(7, 6, b)
+        board.drop(3)
+        Assertions.assertEquals(Pair(true, 'X'), board.checkWinner())
+    }
+
+    @Test
+    fun testBoardFindsWinnerLeftDiagonalY1() {
+        val b = arrayOf(
+                charArrayOf('.', '.', '.', 'X', 'Y', 'X'),
+                charArrayOf('.', '.', '.', 'Y', 'X', 'Y'),
+                charArrayOf('.', '.', '.', '.', 'Y', 'X'),
+                charArrayOf('.', '.', '.', '.', '.', 'Y'),
+                charArrayOf('.', '.', '.', '.', '.', 'X'),
+                charArrayOf('.', '.', '.', '.', '.', '.'),
+                charArrayOf('.', '.', '.', '.', '.', '.')
+        )
+        val board = Board(7, 6, b)
+        board.drop(6)
+        Assertions.assertFalse(board.checkWinner().first)
+        board.drop(0)
+        Assertions.assertEquals(Pair(true, 'Y'), board.checkWinner())
+    }
+
+    @Test
+    fun testBoardFindsWinnerLeftDiagonalY2() {
+        val b = arrayOf(
+                charArrayOf('.', '.', 'Y', 'X', 'Y', 'X'),
+                charArrayOf('.', '.', '.', 'Y', 'X', 'Y'),
+                charArrayOf('.', '.', '.', '.', 'Y', 'X'),
+                charArrayOf('.', '.', '.', '.', '.', '.'),
+                charArrayOf('.', '.', '.', '.', '.', 'X'),
+                charArrayOf('.', '.', '.', '.', '.', '.'),
+                charArrayOf('.', '.', '.', '.', '.', '.')
+        )
+        val board = Board(7, 6, b)
+        board.drop(6)
+        Assertions.assertFalse(board.checkWinner().first)
+        board.drop(3)
+        Assertions.assertEquals(Pair(true, 'Y'), board.checkWinner())
+    }
+
+    @Test
+    fun testBoardFindsWinnerRightDiagonalX1() {
+        val b = arrayOf(
+                charArrayOf('.', '.', '.', '.', '.', '.'),
+                charArrayOf('.', '.', '.', '.', '.', '.'),
+                charArrayOf('.', '.', '.', '.', '.', 'Y'),
+                charArrayOf('.', '.', '.', '.', '.', 'X'),
+                charArrayOf('.', '.', '.', '.', 'X', 'Y'),
+                charArrayOf('.', '.', '.', 'X', 'Y', 'X'),
+                charArrayOf('.', '.', '.', 'Y', 'X', 'Y')
+        )
+        val board = Board(7, 6, b)
+        board.drop(6)
+        Assertions.assertEquals(Pair(true, 'X'), board.checkWinner())
+    }
+
+    @Test
+    fun testBoardFindsWinnerRightDiagonalX2() {
+        val b = arrayOf(
+                charArrayOf('.', '.', '.', '.', '.', '.'),
+                charArrayOf('.', '.', '.', '.', '.', '.'),
+                charArrayOf('.', '.', '.', '.', '.', 'Y'),
+                charArrayOf('.', '.', '.', '.', '.', '.'),
+                charArrayOf('.', '.', '.', '.', 'X', 'Y'),
+                charArrayOf('.', '.', '.', 'X', 'Y', 'X'),
+                charArrayOf('.', '.', 'X', 'Y', 'X', 'Y')
+        )
+        val board = Board(7, 6, b)
+        board.drop(3)
+        Assertions.assertEquals(Pair(true, 'X'), board.checkWinner())
+    }
+
+    @Test
+    fun testBoardFindsWinnerRightDiagonalY1() {
+        val b = arrayOf(
+                charArrayOf('.', '.', '.', '.', '.', '.'),
+                charArrayOf('.', '.', '.', '.', '.', '.'),
+                charArrayOf('.', '.', '.', '.', '.', 'X'),
+                charArrayOf('.', '.', '.', '.', '.', 'Y'),
+                charArrayOf('.', '.', '.', '.', 'Y', 'X'),
+                charArrayOf('.', '.', '.', 'Y', 'X', 'Y'),
+                charArrayOf('.', '.', '.', 'X', 'Y', 'X')
+        )
+        val board = Board(7, 6, b)
+        board.drop(0)
+        Assertions.assertFalse(board.checkWinner().first)
+        board.drop(6)
+        Assertions.assertEquals(Pair(true, 'Y'), board.checkWinner())
+    }
+
+    @Test
+    fun testBoardFindsWinnerRightDiagonalY2() {
+        val b = arrayOf(
+                charArrayOf('.', '.', '.', '.', '.', '.'),
+                charArrayOf('.', '.', '.', '.', '.', '.'),
+                charArrayOf('.', '.', '.', '.', '.', 'X'),
+                charArrayOf('.', '.', '.', '.', '.', '.'),
+                charArrayOf('.', '.', '.', '.', 'Y', 'X'),
+                charArrayOf('.', '.', '.', 'Y', 'X', 'Y'),
+                charArrayOf('.', '.', 'Y', 'X', 'Y', 'X')
+        )
+        val board = Board(7, 6, b)
+        board.drop(0)
+        Assertions.assertFalse(board.checkWinner().first)
+        board.drop(3)
+        Assertions.assertEquals(Pair(true, 'Y'), board.checkWinner())
+    }
 }
