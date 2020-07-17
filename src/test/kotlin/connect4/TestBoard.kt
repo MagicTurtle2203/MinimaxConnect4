@@ -37,7 +37,7 @@ class TestBoard {
         for (i in 0 until 5) {
             b.drop(0)
         }
-        Assertions.assertArrayEquals(charArrayOf('X', 'Y', 'X', 'Y', 'X'), b.board[0])
+        Assertions.assertEquals(listOf('X', 'Y', 'X', 'Y', 'X'), b.board[0])
     }
 
     @Test
