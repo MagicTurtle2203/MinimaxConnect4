@@ -65,8 +65,8 @@ class Board(val numCols: Int, val numRows: Int, prepopulatedBoard: Array<CharArr
         // Check forward slash diagonal
         (minRow..maxRow).map { row -> Pair(row - lastPlayed.second + lastPlayed.first, row)
         }.filter { point ->
-            (point.first >= 0 && point.first < numCols - 3) &&
-            (point.second >= 0 && point.second < numRows - 3)
+            (point.first in 0 until (numCols - 3)) &&
+            (point.second in 0 until (numRows - 3))
         }.forEach { (_col, _row) ->
             if ((0..3).map { add -> _board[_col + add][_row + add] }.all { it == player })
                 return Pair(true, player)
@@ -75,8 +75,8 @@ class Board(val numCols: Int, val numRows: Int, prepopulatedBoard: Array<CharArr
         // Check backslash diagonal
         (minRow..maxRow).map { row -> Pair(-row + lastPlayed.second + lastPlayed.first, row)
         }.filter { point ->
-            (point.first > 2 && point.first < numCols - 1) &&
-            (point.second >= 0 && point.second < numRows - 3)
+            (point.first in 3 until numCols) &&
+            (point.second in 0 until (numRows - 3))
         }.forEach { (_col, _row) ->
             if ((0..3).map { add -> _board[_col - add][_row + add] }.all { it == player })
                 return Pair(true, player)
