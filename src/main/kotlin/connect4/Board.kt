@@ -11,14 +11,19 @@ class Board(private val numRows: Int, private val numCols: Int) {
         }
 
         val index = board[colNumber].lastIndexOf(' ')
-        board[colNumber][index] = when (turn) {
-            Players.X -> {
-                turn = Players.Y
-                'X'
-            }
-            Players.Y -> {
-                turn = Players.X
-                'Y'
+
+        if (index == -1) {
+            throw InvalidMoveException("Column is full")
+        } else {
+            board[colNumber][index] = when (turn) {
+                Players.X -> {
+                    turn = Players.Y
+                    'X'
+                }
+                Players.Y -> {
+                    turn = Players.X
+                    'Y'
+                }
             }
         }
     }
