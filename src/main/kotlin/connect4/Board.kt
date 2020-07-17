@@ -9,7 +9,7 @@ class Board(val numCols: Int, val numRows: Int, prepopulatedBoard: Array<CharArr
     private val _board: Array<CharArray> = if (prepopulatedBoard == null)
         Array(numCols) { CharArray(numRows) { '.' } }
     else {
-        if (prepopulatedBoard.size != numCols || prepopulatedBoard.all { it.size == numRows })
+        if (prepopulatedBoard.size != numCols || prepopulatedBoard.all { it.size != numRows })
             throw BoardParameterMismatchException("Given board does not match given parameters")
         prepopulatedBoard
     }
