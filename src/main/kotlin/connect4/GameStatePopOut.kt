@@ -1,8 +1,8 @@
 package connect4
 
 class GameStatePopOut(val numCols: Int, val numRows: Int) {
-    private val _board: Array<CharArray> = Array(numCols) { CharArray(numRows) { '.' } }
-    val board: List<List<Char>> get() = _board.map { it.toList() }
+    private val _board: Array<Array<Players>> = Array(numCols) { Array(numRows) { Players.NONE } }
+    val board: List<List<Char>> get() = _board.map { col -> col.map { item -> item.token }.toList() }
     private var turn: Players = Players.X
 
     fun drop(colIndex: Int) {
@@ -10,7 +10,7 @@ class GameStatePopOut(val numCols: Int, val numRows: Int) {
             throw InvalidMoveException("Column index out of range")
         }
 
-        val rowIndex = _board[colIndex].lastIndexOf('.')
+        val rowIndex = _board[colIndex].lastIndexOf(Players.NONE)
 
         if (rowIndex == -1) {
             throw InvalidMoveException("Column is full")
@@ -18,31 +18,49 @@ class GameStatePopOut(val numCols: Int, val numRows: Int) {
             _board[colIndex][rowIndex] = when (turn) {
                 Players.X -> {
                     turn = Players.Y
-                    Players.X.token
+                    Players.X
                 }
                 Players.Y -> {
                     turn = Players.X
-                    Players.Y.token
+                    Players.Y
                 }
-                else -> {
-                    throw SomethingWentWrong("I'm not sure how this happened")
-                }
+                else -> throw SomethingWentWrong("This shouldn't happen")
             }
         }
     }
 
     fun pop(colIndex: Int) {
-        if (colIndex !in 0 until numCols || _board[colIndex].last() != turn.token) {
+        if (colIndex !in 0 until numCols || _board[colIndex].last() != turn) {
             throw InvalidMoveException("Can only pop your own pieces from the bottom")
         }
 
-        val newCol = CharArray(numRows) { '.' }.mapIndexed { index, c ->
+        val newCol = Array(numRows) { Players.NONE }.mapIndexed { index, c ->
             when (index > 0) {
                 true -> _board[colIndex][index - 1]
                 false -> c
             }
-        }.toCharArray()
+        }.toTypedArray()
 
         _board[colIndex] = newCol
+
+        turn = when (turn) {
+            Players.X -> Players.Y
+            Players.Y -> Players.X
+            else -> throw SomethingWentWrong("This shouldn't happen")
+        }
+    }
+
+    fun checkWinner(): Pair<Boolean, Players> {
+        // Check Horizontal
+        for (row in 0 until numRows) {
+            for (col in 0 until numCols - 4) {
+                val player = _board[col][row]
+                if (player == Players.NONE) continue
+                else if ((0..3).map { add -> _board[col + add][row] }.all { it == player })
+                    return Pair(true, player)
+            }
+        }
+
+        return Pair(false, Players.NONE)
     }
 }
