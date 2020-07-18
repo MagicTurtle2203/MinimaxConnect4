@@ -1,7 +1,7 @@
 package connect4
 
-class PlayerAI : AI {
-    override fun getMove(): Int {
+class PlayerAgent : AI {
+    override fun getMove(): Move {
         TODO("Not yet implemented")
     }
 }
