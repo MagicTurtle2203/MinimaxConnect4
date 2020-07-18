@@ -53,7 +53,7 @@ class GameStatePopOut(val numCols: Int, val numRows: Int) {
     fun checkWinner(): Pair<Boolean, Players> {
         // Check Horizontal
         for (row in 0 until numRows) {
-            for (col in 0 until numCols - 3) {
+            for (col in 0..numCols - 4) {
                 val player = _board[col][row]
                 if (player == Players.NONE) continue
                 else if ((0..3).map { add -> _board[col + add][row] }.all { it == player })
@@ -63,7 +63,7 @@ class GameStatePopOut(val numCols: Int, val numRows: Int) {
 
         // Check Vertical
         for (col in 0 until numCols) {
-            for (row in 0 until numRows - 3) {
+            for (row in 0..numRows - 4) {
                 val player = _board[col][row]
                 if (player == Players.NONE) continue
                 else if (_board[col].slice(row..(row + 3)).all { it == player })
@@ -71,6 +71,27 @@ class GameStatePopOut(val numCols: Int, val numRows: Int) {
             }
         }
 
+        // Check forward slash diagonal
+        for (col in 0..numCols - 4) {
+            for (row in 0..numRows - 4) {
+                val player = _board[col][row]
+                if (player == Players.NONE) continue
+                else if ((0..3).map { add -> _board[col + add][row + add] }.all { it == player })
+                    return Pair(true, player)
+            }
+        }
+
+        // Check backslash diagonal
+        for (col in (numCols - 4) until numCols) {
+            for (row in 0..numRows - 4) {
+                val player = _board[col][row]
+                if (player == Players.NONE) continue
+                else if ((0..3).map { add -> _board[col - add][row + add] }.all { it == player })
+                    return Pair(true, player)
+            }
+        }
+
+        // No winner found
         return Pair(false, Players.NONE)
     }
 }
