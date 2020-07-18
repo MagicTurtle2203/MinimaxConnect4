@@ -53,10 +53,20 @@ class GameStatePopOut(val numCols: Int, val numRows: Int) {
     fun checkWinner(): Pair<Boolean, Players> {
         // Check Horizontal
         for (row in 0 until numRows) {
-            for (col in 0 until numCols - 4) {
+            for (col in 0 until numCols - 3) {
                 val player = _board[col][row]
                 if (player == Players.NONE) continue
                 else if ((0..3).map { add -> _board[col + add][row] }.all { it == player })
+                    return Pair(true, player)
+            }
+        }
+
+        // Check Vertical
+        for (col in 0 until numCols) {
+            for (row in 0 until numRows - 3) {
+                val player = _board[col][row]
+                if (player == Players.NONE) continue
+                else if (_board[col].slice(row..(row + 3)).all { it == player })
                     return Pair(true, player)
             }
         }
