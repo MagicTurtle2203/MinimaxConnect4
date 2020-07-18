@@ -52,7 +52,14 @@ class GameRunner(mode: Modes, boardCols: Int, boardRows: Int, lengthToWin: Int =
             board.displayBoard()
 
             val (hasWinner, winner) = board.checkWinner()
-            if (hasWinner) return winner
+            if (hasWinner) {
+                when (winner) {
+                    Players.X -> println("Player 1 Wins")
+                    Players.Y -> println("Player 2 Wins")
+                    Players.NONE -> println("Tie")
+                }
+                return winner
+            }
             turn = turn % 2 + 1
         }
     }

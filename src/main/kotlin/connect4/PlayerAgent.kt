@@ -10,7 +10,7 @@ class PlayerAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean)
         val columnNumber: Int
 
         inputmt@ while (true) {
-            print("Enter move type: ")
+            print("Enter move type (drop or pop): ")
             val inputMoveType = readLine()
             moveType = when (inputMoveType!!.toLowerCase()) {
                 "drop" -> MoveType.DROP
