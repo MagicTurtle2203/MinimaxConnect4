@@ -1,6 +1,6 @@
 package connect4
 
-class GameStatePopOut(val numCols: Int, val numRows: Int) {
+class GameStatePopOut(val numCols: Int, val numRows: Int, val lengthToWin: Int = 4) {
     private val _board: Array<Array<Players>> = Array(numCols) { Array(numRows) { Players.NONE } }
     val board: List<List<Char>> get() = _board.map { col -> col.map { item -> item.token }.toList() }
     private var turn: Players = Players.X
@@ -53,40 +53,40 @@ class GameStatePopOut(val numCols: Int, val numRows: Int) {
     fun checkWinner(): Pair<Boolean, Players> {
         // Check Horizontal
         for (row in 0 until numRows) {
-            for (col in 0..numCols - 4) {
+            for (col in 0..numCols - lengthToWin) {
                 val player = _board[col][row]
                 if (player == Players.NONE) continue
-                else if ((0..3).map { add -> _board[col + add][row] }.all { it == player })
+                else if ((0 until lengthToWin).map { add -> _board[col + add][row] }.all { it == player })
                     return Pair(true, player)
             }
         }
 
         // Check Vertical
         for (col in 0 until numCols) {
-            for (row in 0..numRows - 4) {
+            for (row in 0..numRows - lengthToWin) {
                 val player = _board[col][row]
                 if (player == Players.NONE) continue
-                else if (_board[col].slice(row..(row + 3)).all { it == player })
+                else if (_board[col].slice(row until (row + lengthToWin)).all { it == player })
                     return Pair(true, player)
             }
         }
 
         // Check forward slash diagonal
-        for (col in 0..numCols - 4) {
-            for (row in 0..numRows - 4) {
+        for (col in 0..numCols - lengthToWin) {
+            for (row in 0..numRows - lengthToWin) {
                 val player = _board[col][row]
                 if (player == Players.NONE) continue
-                else if ((0..3).map { add -> _board[col + add][row + add] }.all { it == player })
+                else if ((0 until lengthToWin).map { add -> _board[col + add][row + add] }.all { it == player })
                     return Pair(true, player)
             }
         }
 
         // Check backslash diagonal
-        for (col in (numCols - 4) until numCols) {
-            for (row in 0..numRows - 4) {
+        for (col in (numCols - lengthToWin) until numCols) {
+            for (row in 0..numRows - lengthToWin) {
                 val player = _board[col][row]
                 if (player == Players.NONE) continue
-                else if ((0..3).map { add -> _board[col - add][row + add] }.all { it == player })
+                else if ((0 until lengthToWin).map { add -> _board[col - add][row + add] }.all { it == player })
                     return Pair(true, player)
             }
         }
