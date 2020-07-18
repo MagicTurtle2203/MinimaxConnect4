@@ -5,6 +5,15 @@ class GameState(val numCols: Int, val numRows: Int, val lengthToWin: Int = 4, va
     val board: List<List<Char>> get() = _board.map { col -> col.map { item -> item.token }.toList() }
     private var turn: Players = Players.X
 
+    fun displayBoard() {
+        for (i in 0 until numRows) {
+            for (j in 0 until numCols) {
+                print("${board[j][i]} ")
+            }
+            println("")
+        }
+    }
+
     fun drop(colIndex: Int) {
         if (colIndex !in 0 until numCols) {
             throw InvalidMoveException("Column index out of range")
