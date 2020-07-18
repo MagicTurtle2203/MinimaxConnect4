@@ -1,6 +1,6 @@
 package connect4
 
-class GameStatePopOut(val numCols: Int, val numRows: Int, val lengthToWin: Int = 4) {
+class GameState(val numCols: Int, val numRows: Int, val lengthToWin: Int = 4, val popOut: Boolean = false) {
     private val _board: Array<Array<Players>> = Array(numCols) { Array(numRows) { Players.NONE } }
     val board: List<List<Char>> get() = _board.map { col -> col.map { item -> item.token }.toList() }
     private var turn: Players = Players.X
@@ -30,6 +30,10 @@ class GameStatePopOut(val numCols: Int, val numRows: Int, val lengthToWin: Int =
     }
 
     fun pop(colIndex: Int) {
+        if (!popOut) {
+            throw InvalidMoveException("This game mode does not allow popping")
+        }
+
         if (colIndex !in 0 until numCols || _board[colIndex].last() != turn) {
             throw InvalidMoveException("Can only pop your own pieces from the bottom")
         }

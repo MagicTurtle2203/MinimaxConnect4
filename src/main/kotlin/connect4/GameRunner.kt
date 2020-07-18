@@ -2,8 +2,8 @@ package connect4
 
 enum class Modes { DEFAULT, PVP, AIONLY }
 
-class GameRunner(mode: Modes, boardCols: Int, boardRows: Int) {
-    private val board = GameStatePopOut(boardCols, boardRows)
+class GameRunner(mode: Modes, boardCols: Int, boardRows: Int, lengthToWin: Int, popOut: Boolean) {
+    private val board = GameState(boardCols, boardRows, lengthToWin, popOut)
     private val player1: AI
     private val player2: AI
 
