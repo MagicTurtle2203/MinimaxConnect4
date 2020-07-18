@@ -367,7 +367,7 @@ class TestGameStatePopOutCheckWinner {
     }
 
     @Test
-    fun testBoardFindsWinnerLeftDiagonalX1() {
+    fun testFindsWinnerForwardDiagonalX1() {
         val b = GameStatePopOut(7, 6)
         b.drop(1)
         Assertions.assertFalse(b.checkWinner().first)
@@ -394,7 +394,7 @@ class TestGameStatePopOutCheckWinner {
     }
 
     @Test
-    fun testBoardFindsWinnerLeftDiagonalX2() {
+    fun testFindsWinnerForwardDiagonalX2() {
         val b = GameStatePopOut(7, 6)
         b.drop(1)
         Assertions.assertFalse(b.checkWinner().first)
@@ -421,7 +421,7 @@ class TestGameStatePopOutCheckWinner {
     }
 
     @Test
-    fun testBoardFindsWinnerLeftDiagonalY1() {
+    fun testFindsWinnerForwardDiagonalY1() {
         val b = GameStatePopOut(7, 6)
         b.drop(0)
         Assertions.assertFalse(b.checkWinner().first)
@@ -450,7 +450,7 @@ class TestGameStatePopOutCheckWinner {
     }
 
     @Test
-    fun testBoardFindsWinnerLeftDiagonalY2() {
+    fun testFindsWinnerForwardDiagonalY2() {
         val b = GameStatePopOut(7, 6)
         b.drop(0)
         Assertions.assertFalse(b.checkWinner().first)
@@ -479,7 +479,7 @@ class TestGameStatePopOutCheckWinner {
     }
 
     @Test
-    fun testBoardFindsWinnerRightDiagonalX1() {
+    fun testFindsWinnerBackDiagonalX1() {
         val b = GameStatePopOut(7, 6)
         b.drop(3)
         Assertions.assertFalse(b.checkWinner().first)
@@ -506,7 +506,7 @@ class TestGameStatePopOutCheckWinner {
     }
 
     @Test
-    fun testBoardFindsWinnerRightDiagonalX2() {
+    fun testFindsWinnerBackDiagonalX2() {
         val b = GameStatePopOut(7, 6)
         b.drop(5)
         Assertions.assertFalse(b.checkWinner().first)
@@ -533,7 +533,7 @@ class TestGameStatePopOutCheckWinner {
     }
 
     @Test
-    fun testBoardFindsWinnerRightDiagonalY1() {
+    fun testFindsWinnerBackDiagonalY1() {
         val b = GameStatePopOut(7, 6)
         b.drop(2)
         Assertions.assertFalse(b.checkWinner().first)
@@ -562,7 +562,7 @@ class TestGameStatePopOutCheckWinner {
     }
 
     @Test
-    fun testBoardFindsWinnerRightDiagonalY2() {
+    fun testFindsWinnerBackDiagonalY2() {
         val b = GameStatePopOut(7, 6)
         b.drop(2)
         Assertions.assertFalse(b.checkWinner().first)
@@ -588,5 +588,154 @@ class TestGameStatePopOutCheckWinner {
         Assertions.assertFalse(b.checkWinner().first)
         b.drop(3)
         Assertions.assertEquals(Pair(true, Players.Y), b.checkWinner())
+    }
+
+    @Test
+    fun testFindsWinnerAfterPopHorizontalX() {
+        val b = GameStatePopOut(7, 6)
+        b.drop(0)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(1)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(1)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(2)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(2)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(3)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(3)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(0)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(0)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(1)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.pop(0)
+        Assertions.assertEquals(Pair(true, Players.X), b.checkWinner())
+    }
+
+    @Test
+    fun testFindsWinnerAfterPopHorizontalY() {
+        val b = GameStatePopOut(7, 6)
+        b.drop(1)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(0)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(2)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(1)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(3)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(2)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(0)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(3)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(1)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(0)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(5)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.pop(0)
+        Assertions.assertEquals(Pair(true, Players.Y), b.checkWinner())
+    }
+
+    @Test
+    fun testFindsWinnerForwardDiagonalX() {
+        val b = GameStatePopOut(7, 6)
+        b.drop(2)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(0)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(3)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(1)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(0)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(0)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(1)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(2)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(1)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(3)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(2)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(3)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(0)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(4)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.pop(2)
+        Assertions.assertEquals(Pair(true, Players.X), b.checkWinner())
+    }
+
+    @Test
+    fun testFindsWinnerBackDiagonalX() {
+        val b = GameStatePopOut(7, 6)
+        b.drop(3)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(5)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(4)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(6)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(5)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(3)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(6)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(4)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(4)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(3)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(5)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(6)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(6)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(2)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.pop(4)
+        Assertions.assertEquals(Pair(true, Players.X), b.checkWinner())
+    }
+
+    @Test
+    fun testFindsWinnerWithCustomWinningLengthX() {
+        val b = GameStatePopOut(7, 6, 5)
+        b.drop(0)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(0)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(1)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(1)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(2)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(2)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(3)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(3)
+        Assertions.assertFalse(b.checkWinner().first)
+        b.drop(4)
+        Assertions.assertEquals(Pair(true, Players.X), b.checkWinner())
     }
 }
