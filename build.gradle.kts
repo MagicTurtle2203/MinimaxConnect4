@@ -29,11 +29,11 @@ tasks {
 }
 
 tasks.shadowJar {
-    archiveBaseName.set("MinimaxCheckers")
+    archiveBaseName.set("MinimaxConnect4")
     archiveClassifier.set("")
     mergeServiceFiles()
     manifest {
-        attributes["Main-Class"] = ""
+        attributes["Main-Class"] = "MainKt"
     }
 }
 
