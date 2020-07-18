@@ -3,7 +3,7 @@ package connect4
 enum class Modes { DEFAULT, PVP, AIONLY }
 
 class GameRunner(mode: Modes, boardCols: Int, boardRows: Int) {
-    private val board = Board(boardCols, boardRows)
+    private val board = GameStatePopOut(boardCols, boardRows)
     private val player1: AI
     private val player2: AI
 
@@ -24,7 +24,7 @@ class GameRunner(mode: Modes, boardCols: Int, boardRows: Int) {
         }
     }
 
-    fun run(): Char {
+    fun run(): Players {
         var turn = 1
 
         while (true) {
