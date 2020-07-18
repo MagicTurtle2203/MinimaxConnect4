@@ -2,23 +2,23 @@ package connect4
 
 enum class Modes { DEFAULT, PVP, AIONLY }
 
-class GameRunner(mode: Modes, boardCols: Int, boardRows: Int, lengthToWin: Int, popOut: Boolean) {
+class GameRunner(mode: Modes, boardCols: Int, boardRows: Int, lengthToWin: Int = 4, popOut: Boolean = false) {
     private val board = GameState(boardCols, boardRows, lengthToWin, popOut)
     private val player1: AI
     private val player2: AI
 
     init {
         when (mode) {
+            Modes.DEFAULT -> {
+                player1 = PlayerAgent()
+                player2 = AIAgent()
+            }
             Modes.PVP -> {
-                player1 = PlayerAI()
-                player2 = PlayerAI()
+                player1 = PlayerAgent()
+                player2 = PlayerAgent()
             }
             Modes.AIONLY -> {
                 player1 = AIAgent()
-                player2 = AIAgent()
-            }
-            Modes.DEFAULT -> {
-                player1 = PlayerAI()
                 player2 = AIAgent()
             }
         }
@@ -28,9 +28,18 @@ class GameRunner(mode: Modes, boardCols: Int, boardRows: Int, lengthToWin: Int, 
         var turn = 1
 
         while (true) {
-            when (turn % 2) {
-                1 -> board.drop(player1.getMove())
-                0 -> board.drop(player2.getMove())
+            val move = when (turn % 2) {
+                1 -> player1.getMove()
+                0 -> player2.getMove()
+                else -> throw SomethingWentWrong("Modulo 2 should only give 1 or 0")
+            }
+            try {
+                when (move.moveType) {
+                    MoveType.DROP -> board.drop(move.columnIndex)
+                    MoveType.POP -> board.pop(move.columnIndex)
+                }
+            } catch (e: InvalidMoveException) {
+                println(e)
             }
             val (hasWinner, winner) = board.checkWinner()
             if (hasWinner) return winner
