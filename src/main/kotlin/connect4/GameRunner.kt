@@ -17,7 +17,7 @@ class GameRunner(mode: Modes, boardCols: Int, boardRows: Int) {
                 player1 = AIAgent()
                 player2 = AIAgent()
             }
-            else -> {
+            Modes.DEFAULT -> {
                 player1 = PlayerAI()
                 player2 = AIAgent()
             }
