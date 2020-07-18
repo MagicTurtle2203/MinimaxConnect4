@@ -2,7 +2,7 @@ package connect4
 
 import org.junit.jupiter.api.*
 
-class TestGameStatePopOut {
+class TestGameState {
     @Test
     fun testBoardIsCreatedWithCorrectDimensions() {
         val b = GameState(7, 6, popOut = true)
