@@ -1,5 +1,5 @@
 package connect4
 
-interface AI {
-    fun getMove(): Move
+abstract class AI(val numCols: Int, val numRows: Int, val lengthToWin: Int, val popOut: Boolean) {
+    abstract fun getMove(): Move
 }

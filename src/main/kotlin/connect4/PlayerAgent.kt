@@ -1,6 +1,9 @@
 package connect4
 
-class PlayerAgent : AI {
+import kotlin.io.readLine
+
+class PlayerAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean)
+    : AI(numCols, numRows, lengthToWin, popOut) {
     override fun getMove(): Move {
         TODO("Not yet implemented")
     }
