@@ -1,5 +1,5 @@
 package connect4
 
 interface AI {
-    fun getMove(): Int
+    fun getMove(): Move
 }
