@@ -98,13 +98,19 @@ class GameState(val numCols: Int, val numRows: Int, val lengthToWin: Int = 4, va
         }
 
         // Check backslash diagonal
-        for (col in (numCols - lengthToWin) until numCols) {
+        for (col in (numCols - lengthToWin + 1) until numCols) {
             for (row in 0..numRows - lengthToWin) {
                 val player = _board[col][row]
                 if (player == Players.NONE) continue
                 else if ((0 until lengthToWin).map { add -> _board[col - add][row + add] }.all { it == player })
                     return Pair(true, player)
             }
+        }
+
+        // Check tie
+        if (!popOut) {
+            if (_board.all { col -> col.count { row -> row == Players.NONE } == 0 })
+                return Pair(true, Players.NONE)
         }
 
         // No winner found
