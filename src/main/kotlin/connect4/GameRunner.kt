@@ -25,8 +25,9 @@ class GameRunner(mode: Modes, boardCols: Int, boardRows: Int, lengthToWin: Int =
     }
 
     fun run(): Players {
-        var turn = 1
+        board.displayBoard()
 
+        var turn = 1
         while (true) {
             val move = when (turn % 2) {
                 1 -> {
@@ -49,7 +50,7 @@ class GameRunner(mode: Modes, boardCols: Int, boardRows: Int, lengthToWin: Int =
                 continue
             }
             board.displayBoard()
-            println("")
+
             val (hasWinner, winner) = board.checkWinner()
             if (hasWinner) return winner
             turn = turn % 2 + 1

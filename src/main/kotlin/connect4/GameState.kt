@@ -7,11 +7,14 @@ class GameState(val numCols: Int, val numRows: Int, val lengthToWin: Int = 4, va
 
     fun displayBoard() {
         for (i in 0 until numRows) {
+            print("$i ")
             for (j in 0 until numCols) {
                 print("${board[j][i]} ")
             }
             println("")
         }
+        println("  ${(0 until numCols).joinToString(separator = " ")}")
+        println("")
     }
 
     fun drop(colIndex: Int) {
