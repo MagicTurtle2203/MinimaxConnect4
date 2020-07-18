@@ -32,7 +32,7 @@ class GameStatePopOut(val numCols: Int, val numRows: Int) {
     }
 
     fun pop(colIndex: Int) {
-        if (_board[colIndex].last() != turn.token) {
+        if (colIndex !in 0 until numCols || _board[colIndex].last() != turn.token) {
             throw InvalidMoveException("Can only pop your own pieces from the bottom")
         }
 
