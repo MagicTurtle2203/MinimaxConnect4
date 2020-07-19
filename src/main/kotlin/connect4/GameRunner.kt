@@ -32,11 +32,11 @@ class GameRunner(mode: Modes, boardCols: Int, boardRows: Int, lengthToWin: Int =
             val move = when (turn % 2) {
                 1 -> {
                     println("Player 1's Turn")
-                    player1.getMove()
+                    player1.getMove(board.board)
                 }
                 0 -> {
                     println("Player 2's Turn")
-                    player2.getMove()
+                    player2.getMove(board.board)
                 }
                 else -> throw SomethingWentWrong("Modulo 2 should only give 1 or 0")
             }

@@ -5,7 +5,7 @@ import kotlin.io.readLine
 
 class PlayerAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean)
     : AI(numCols, numRows, lengthToWin, popOut) {
-    override fun getMove(): Move {
+    override fun getMove(boardState: List<List<Char>>): Move {
         val moveType: MoveType
         val columnNumber: Int
 
