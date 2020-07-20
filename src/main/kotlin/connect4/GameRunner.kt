@@ -11,15 +11,15 @@ class GameRunner(mode: Modes, boardCols: Int, boardRows: Int, lengthToWin: Int =
         when (mode) {
             Modes.DEFAULT -> {
                 player1 = PlayerAgent(boardCols, boardRows, lengthToWin, popOut)
-                player2 = AIAgent(boardCols, boardRows, lengthToWin, popOut)
+                player2 = AIAgent(boardCols, boardRows, lengthToWin, popOut, Players.Y)
             }
             Modes.PVP -> {
                 player1 = PlayerAgent(boardCols, boardRows, lengthToWin, popOut)
                 player2 = PlayerAgent(boardCols, boardRows, lengthToWin, popOut)
             }
             Modes.AIONLY -> {
-                player1 = AIAgent(boardCols, boardRows, lengthToWin, popOut)
-                player2 = AIAgent(boardCols, boardRows, lengthToWin, popOut)
+                player1 = AIAgent(boardCols, boardRows, lengthToWin, popOut, Players.X)
+                player2 = AIAgent(boardCols, boardRows, lengthToWin, popOut, Players.Y)
             }
         }
     }
