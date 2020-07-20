@@ -5,6 +5,11 @@ class GameState(val numCols: Int, val numRows: Int, val lengthToWin: Int = 4, va
     val board: List<List<Char>> get() = _board.map { col -> col.map { item -> item.token }.toList() }
     private var turn: Players = Players.X
 
+    init {
+        if (lengthToWin > numCols || lengthToWin > numRows)
+            throw InvalidGameSettings("Length to win cannot be longer than board size")
+    }
+
     fun displayBoard() {
         for (i in 0 until numRows) {
             print("$i ")
