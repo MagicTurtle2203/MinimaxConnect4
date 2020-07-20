@@ -2,6 +2,11 @@ package connect4
 
 class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, private val player: Players)
     : AI(numCols, numRows, lengthToWin, popOut) {
+    val opponent = when (player) {
+        Players.X -> Players.Y
+        Players.Y -> Players.X
+        else -> throw SomethingWentWrong("Agent should not be NONE")
+    }
 
     override fun getMove(boardState: List<List<Char>>): Move {
         when (player) {
@@ -11,7 +16,8 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
                 var bestValue = Int.MIN_VALUE
 
                 for (column in 0 until numCols) {
-                    val received = minValue(boardState, column, 5)
+                    val received = minValue(boardState, column, 4)
+                    println("received: $received, bestValue: $bestValue, bestColumn: $bestColumn")
                     if (received > bestValue) {
                         bestColumn = column
                         bestValue = received
@@ -26,7 +32,8 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
                 var bestValue = Int.MAX_VALUE
 
                 for (column in 0 until numCols) {
-                    val received = maxValue(boardState, column, 5)
+                    val received = maxValue(boardState, column, 4)
+                    println("received: $received, bestValue: $bestValue, bestColumn: $bestColumn")
                     if (received < bestValue) {
                         bestColumn = column
                         bestValue = received
@@ -39,7 +46,8 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
         }
     }
 
-    private fun minValue(boardState: List<List<Char>>, column: Int, maxDepth: Int): Int {
+    private fun minValue(boardState: List<List<Char>>, column: Int,
+                         maxDepth: Int, isAgent: Boolean = true): Int {
         if (boardState[column].count { it == '.' } == 0 ||
                 boardState.all { col -> col.count { it == '.' } == 0 } ||
                 maxDepth == 0)
@@ -51,23 +59,23 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
         val rowIndex = newBoard[column].lastIndexOf('.')
         newBoard[column] = newBoard[column].mapIndexed { index, c ->
             when (index == rowIndex) {
-                true -> player.token
+                true -> if (isAgent) player.token else opponent.token
                 false -> c
             }
         }
 
         for (nextColumn in 0 until numCols)
-            bestValue = minOf(bestValue, maxValue(newBoard, nextColumn, maxDepth - 1))
+            bestValue = minOf(bestValue, maxValue(newBoard, nextColumn, maxDepth - 1, !isAgent))
 
         return bestValue
     }
 
-    private fun maxValue(boardState: List<List<Char>>, column: Int, maxDepth: Int): Int {
+    private fun maxValue(boardState: List<List<Char>>, column: Int,
+                         maxDepth: Int, isAgent: Boolean = true): Int {
         if (boardState[column].count { it == '.' } == 0 ||
                 boardState.all { col -> col.count { it == '.' } == 0 } ||
                 maxDepth == 0)
             return evaluateBoard(boardState)
-
 
         var bestValue = Int.MIN_VALUE
 
@@ -75,13 +83,13 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
         val rowIndex = newBoard[column].lastIndexOf('.')
         newBoard[column] = newBoard[column].mapIndexed { index, c ->
             when (index == rowIndex) {
-                true -> player.token
+                true -> if (isAgent) player.token else opponent.token
                 false -> c
             }
         }
 
         for (nextColumn in 0 until numCols)
-            bestValue = maxOf(bestValue, minValue(newBoard, nextColumn, maxDepth - 1))
+            bestValue = maxOf(bestValue, minValue(newBoard, nextColumn, maxDepth - 1, !isAgent))
 
         return bestValue
     }
@@ -95,6 +103,8 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
                 val tokenList = (0 until lengthToWin).map { add -> boardState[col + add][row] }
                 when {
                     tokenList.all { it == 'Y' } -> return -10000
+                    tokenList.count { it == 'X' } == lengthToWin - 1 && tokenList.count { it == '.'} == 1 ->
+                        scoreMap[lengthToWin - 1] = scoreMap.getOrDefault(lengthToWin - 1, 0) + 100
                     else -> {
                         val length = tokenList.count { it == 'X' }
                         scoreMap[length] = scoreMap.getOrDefault(length, 0) + 1
@@ -109,6 +119,8 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
                 val tokenList = boardState[col].slice(row until (row + lengthToWin))
                 when {
                     tokenList.all { it == 'Y' } -> return -10000
+                    tokenList.count { it == 'X' } == lengthToWin - 1 && tokenList.count { it == '.'} == 1 ->
+                        scoreMap[lengthToWin - 1] = scoreMap.getOrDefault(lengthToWin - 1, 0) + 100
                     else -> {
                         val length = tokenList.count { it == 'X' }
                         scoreMap[length] = scoreMap.getOrDefault(length, 0) + 1
@@ -123,6 +135,8 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
                 val tokenList = (0 until lengthToWin).map { add -> boardState[col + add][row + add] }
                 when {
                     tokenList.all { it == 'Y' } -> return -10000
+                    tokenList.count { it == 'X' } == lengthToWin - 1 && tokenList.count { it == '.'} == 1 ->
+                        scoreMap[lengthToWin - 1] = scoreMap.getOrDefault(lengthToWin - 1, 0) + 100
                     else -> {
                         val length = tokenList.count { it == 'X' }
                         scoreMap[length] = scoreMap.getOrDefault(length, 0) + 1
@@ -137,6 +151,8 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
                 val tokenList = (0 until lengthToWin).map { add -> boardState[col - add][row + add] }
                 when {
                     tokenList.all { it == 'Y' } -> return -10000
+                    tokenList.count { it == 'X' } == lengthToWin - 1 && tokenList.count { it == '.'} == 1 ->
+                        scoreMap[lengthToWin - 1] = scoreMap.getOrDefault(lengthToWin - 1, 0) + 100
                     else -> {
                         val length = tokenList.count { it == 'X' }
                         scoreMap[length] = scoreMap.getOrDefault(length, 0) + 1
