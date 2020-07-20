@@ -5,7 +5,7 @@ import com.xenomachina.argparser.InvalidArgumentException
 import com.xenomachina.argparser.default
 
 class Connect4Args(parser: ArgParser) {
-    val mode by parser.storing("-m", "--m",
+    val mode by parser.storing("-m", "--mode",
             help = "game modes: default -> player vs AI, pvp -> player vs player, " +
                     "aionly -> AI vs AI") { toLowerCase() }
             .default("default")
