@@ -4,59 +4,85 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
     : AI(numCols, numRows, lengthToWin, popOut) {
 
     override fun getMove(boardState: List<List<Char>>): Move {
-        TODO("Not yet implemented")
-    }
+        when (player) {
+            Players.X -> {
+                // max of minValue
+                var bestColumn = 0
+                var bestValue = Int.MIN_VALUE
 
-    private fun minimaxDecision(boardState: List<List<Char>>): Int {
-        if (player == Players.X) {
-            // max of minValue
+                for (column in 0 until numCols) {
+                    val received = minValue(boardState, column, 5)
+                    if (received > bestValue) {
+                        bestColumn = column
+                        bestValue = received
+                    }
+                }
 
-        } else if (player == Players.Y) {
-            // min of maxValue
+                return Move(MoveType.DROP, bestColumn)
+            }
+            Players.Y -> {
+                // min of maxValue
+                var bestColumn = 0
+                var bestValue = Int.MAX_VALUE
+
+                for (column in 0 until numCols) {
+                    val received = maxValue(boardState, column, 5)
+                    if (received < bestValue) {
+                        bestColumn = column
+                        bestValue = received
+                    }
+                }
+
+                return Move(MoveType.DROP, bestColumn)
+            }
+            else -> throw SomethingWentWrong("Agent shouldn't be NONE")
         }
     }
 
     private fun minValue(boardState: List<List<Char>>, column: Int, maxDepth: Int): Int {
-        if (boardState.all { col -> col.count { it == '.' } == 0 } || maxDepth == 0)
+        if (boardState[column].count { it == '.' } == 0 ||
+                boardState.all { col -> col.count { it == '.' } == 0 } ||
+                maxDepth == 0)
             return evaluateBoard(boardState)
 
         var bestValue = Int.MAX_VALUE
 
-        boardState.withIndex().filter { (_, list) ->
-            list.count { it == '.' } > 0
-        }.forEach { (column, _) ->
-            val newBoard = boardState.toMutableList()
-            val rowIndex = newBoard[column].lastIndexOf('.')
-            newBoard[column] = newBoard[column].mapIndexed { index, c ->
-                when (index == rowIndex) {
-                    true -> player.token
-                    false -> c
-                }
+        val newBoard = boardState.toMutableList()
+        val rowIndex = newBoard[column].lastIndexOf('.')
+        newBoard[column] = newBoard[column].mapIndexed { index, c ->
+            when (index == rowIndex) {
+                true -> player.token
+                false -> c
             }
-            bestValue = minOf(bestValue, maxValue(newBoard, maxDepth - 1))
         }
+
+        for (nextColumn in 0 until numCols)
+            bestValue = minOf(bestValue, maxValue(newBoard, nextColumn, maxDepth - 1))
+
         return bestValue
     }
 
-    private fun maxValue(boardState: List<List<Char>>, maxDepth: Int): Int {
-        if (boardState.all { col -> col.count { it == '.' } == 0 } || maxDepth == 0)
+    private fun maxValue(boardState: List<List<Char>>, column: Int, maxDepth: Int): Int {
+        if (boardState[column].count { it == '.' } == 0 ||
+                boardState.all { col -> col.count { it == '.' } == 0 } ||
+                maxDepth == 0)
             return evaluateBoard(boardState)
+
 
         var bestValue = Int.MIN_VALUE
 
-        boardState.withIndex().filter { (_, list) ->
-            list.count { it == '.' } > 0
-        }.forEach { (column, _) ->
-            val newBoard = boardState.toMutableList()
-            val rowIndex = newBoard[column].lastIndexOf('.')
-            newBoard[column] = newBoard[column].mapIndexed { index, c ->
-                when (index == rowIndex) {
-                    true -> player.token
-                    false -> c
-                }
+        val newBoard = boardState.toMutableList()
+        val rowIndex = newBoard[column].lastIndexOf('.')
+        newBoard[column] = newBoard[column].mapIndexed { index, c ->
+            when (index == rowIndex) {
+                true -> player.token
+                false -> c
             }
-            bestValue = maxOf(bestValue, minValue(newBoard, maxDepth - 1))
         }
+
+        for (nextColumn in 0 until numCols)
+            bestValue = maxOf(bestValue, minValue(newBoard, nextColumn, maxDepth - 1))
+
         return bestValue
     }
 
@@ -80,7 +106,7 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
         // Check Vertical
         for (col in 0 until numCols) {
             for (row in 0..numRows - lengthToWin) {
-                val tokenList = (0 until lengthToWin).map { add -> boardState[col + add][row] }
+                val tokenList = boardState[col].slice(row until (row + lengthToWin))
                 when {
                     tokenList.all { it == 'Y' } -> return -10000
                     else -> {
@@ -94,7 +120,7 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
         // Check forward slash diagonal
         for (col in 0..numCols - lengthToWin) {
             for (row in 0..numRows - lengthToWin) {
-                val tokenList = (0 until lengthToWin).map { add -> boardState[col + add][row] }
+                val tokenList = (0 until lengthToWin).map { add -> boardState[col + add][row + add] }
                 when {
                     tokenList.all { it == 'Y' } -> return -10000
                     else -> {
@@ -108,7 +134,7 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
         // Check backslash diagonal
         for (col in (numCols - lengthToWin + 1) until numCols) {
             for (row in 0..numRows - lengthToWin) {
-                val tokenList = (0 until lengthToWin).map { add -> boardState[col + add][row] }
+                val tokenList = (0 until lengthToWin).map { add -> boardState[col - add][row + add] }
                 when {
                     tokenList.all { it == 'Y' } -> return -10000
                     else -> {
