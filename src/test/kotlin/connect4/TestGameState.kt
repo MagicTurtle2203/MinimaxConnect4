@@ -810,4 +810,27 @@ class TestGameStatePopOutCheckWinner {
         b.drop(5)
         Assertions.assertEquals(Pair(false, Players.NONE), b.checkWinner())
     }
+
+    @Test
+    fun testThisShouldBeAWin() {
+        val b = GameState(7, 6)
+        b.drop(0)
+        b.drop(1)
+        b.drop(1)
+        b.drop(1)
+        b.drop(2)
+        b.drop(0)
+        b.drop(3)
+        b.drop(2)
+        b.drop(3)
+        b.drop(1)
+        b.drop(2)
+        b.drop(1)
+        b.drop(1)
+        b.drop(4)
+        b.drop(4)
+        b.drop(3)
+        b.drop(3)
+        Assertions.assertEquals(Pair(true, Players.X), b.checkWinner())
+    }
 }
