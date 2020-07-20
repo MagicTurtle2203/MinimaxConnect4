@@ -10,7 +10,7 @@ class PlayerAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean)
         val columnNumber: Int
 
         inputmt@ while (true) {
-            print("Enter move type (drop or pop): ")
+            print("Enter move type (drop, pop, or exit): ")
             val inputMoveType = readLine()
             moveType = when (inputMoveType!!.toLowerCase()) {
                 "drop" -> MoveType.DROP
@@ -21,6 +21,7 @@ class PlayerAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean)
                     }
                     MoveType.POP
                 }
+                "exit" -> throw ExitGame("Player exited game")
                 else -> {
                     println("Invalid move type entered")
                     continue@inputmt
