@@ -2,7 +2,7 @@ package connect4
 
 class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, private val player: Players)
     : AI(numCols, numRows, lengthToWin, popOut) {
-    val opponent = when (player) {
+    private val opponent = when (player) {
         Players.X -> Players.Y
         Players.Y -> Players.X
         else -> throw SomethingWentWrong("Agent should not be NONE")
@@ -16,7 +16,7 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
                 var bestValue = Int.MIN_VALUE
 
                 for (column in 0 until numCols) {
-                    val received = minValue(boardState, column, 4)
+                    val received = minValue(boardState, column, 5)
                     println("received: $received, bestValue: $bestValue, bestColumn: $bestColumn")
                     if (received > bestValue) {
                         bestColumn = column
@@ -32,7 +32,7 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
                 var bestValue = Int.MAX_VALUE
 
                 for (column in 0 until numCols) {
-                    val received = maxValue(boardState, column, 4)
+                    val received = maxValue(boardState, column, 5)
                     println("received: $received, bestValue: $bestValue, bestColumn: $bestColumn")
                     if (received < bestValue) {
                         bestColumn = column
