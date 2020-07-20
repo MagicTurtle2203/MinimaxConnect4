@@ -33,7 +33,7 @@ class TestGameState {
 
     @Test
     fun testDropHandlesMultipleDropsOnSameColumnCorrectly() {
-        val b = GameState(1, 5)
+        val b = GameState(1, 5, lengthToWin = 1)
         for (i in 0 until 5) {
             b.drop(0)
         }
@@ -42,13 +42,13 @@ class TestGameState {
 
     @Test
     fun testDropThrowsExceptionForInvalidColumnNumber() {
-        val b = GameState(1, 5)
+        val b = GameState(1, 5, lengthToWin = 1)
         Assertions.assertThrows(InvalidMoveException::class.java) { b.drop(1) }
     }
 
     @Test
     fun testDropThrowsExceptionIfColumnFull() {
-        val b = GameState(1, 5)
+        val b = GameState(1, 5, lengthToWin = 1)
         for (i in 0 until 5) {
             b.drop(0)
         }
@@ -57,7 +57,7 @@ class TestGameState {
 
     @Test
     fun testPopRemovesBottomPieceCorrectly() {
-        val b = GameState(1, 5, popOut = true)
+        val b = GameState(1, 5, lengthToWin = 1, popOut = true)
         b.drop(0)
         b.drop(0)
         b.pop(0)
@@ -66,7 +66,7 @@ class TestGameState {
 
     @Test
     fun testPopThrowsExceptionForInvalidColumnIndex() {
-        val b = GameState(1, 5, popOut = true)
+        val b = GameState(1, 5, lengthToWin = 1, popOut = true)
         b.drop(0)
         Assertions.assertThrows(InvalidMoveException::class.java) { b.pop(1) }
     }
