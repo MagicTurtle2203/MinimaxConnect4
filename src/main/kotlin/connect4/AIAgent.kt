@@ -148,7 +148,7 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
         }
 
         // Check backslash diagonal
-        for (col in (numCols - lengthToWin + 1) until numCols) {
+        for (col in (numCols - lengthToWin) until numCols) {
             for (row in 0..numRows - lengthToWin) {
                 val tokenList = (0 until lengthToWin).map { add -> boardState[col - add][row + add] }
                 when {

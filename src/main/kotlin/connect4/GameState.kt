@@ -98,7 +98,7 @@ class GameState(val numCols: Int, val numRows: Int, val lengthToWin: Int = 4, va
         }
 
         // Check backslash diagonal
-        for (col in (numCols - lengthToWin + 1) until numCols) {
+        for (col in (numCols - lengthToWin) until numCols) {
             for (row in 0..numRows - lengthToWin) {
                 val player = _board[col][row]
                 if (player == Players.NONE) continue
