@@ -11,7 +11,7 @@ class GameRunner(mode: Modes, boardCols: Int, boardRows: Int, lengthToWin: Int =
         when (mode) {
             Modes.DEFAULT -> {
                 player1 = PlayerAgent(boardCols, boardRows, lengthToWin, popOut)
-                player2 = AIAgent(boardCols, boardRows, lengthToWin, popOut, Players.Y, 4)
+                player2 = AIAgent(boardCols, boardRows, lengthToWin, popOut, Players.Y, 2)
             }
             Modes.PVP -> {
                 player1 = PlayerAgent(boardCols, boardRows, lengthToWin, popOut)

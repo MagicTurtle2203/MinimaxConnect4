@@ -79,6 +79,12 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
 
     private fun minValue(boardState: List<List<Char>>, column: Int, moveType: MoveType,
                          maxDepth: Int, isAgent: Boolean = true): Int {
+        val winnerStatus = checkWinner(boardState)
+        if (winnerStatus.first && winnerStatus.second == 'Y')
+            return -10000
+        else if (winnerStatus.first || maxDepth == 0)
+            return evaluateBoard(boardState)
+
         var bestValue = Int.MAX_VALUE
         val newBoard = boardState.toMutableList()
         val newColumn = when (moveType) {
@@ -97,9 +103,6 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
             }
         }
         newBoard[column] = newColumn
-
-        if (checkWinner(boardState).first || maxDepth == 0)
-            return evaluateBoard(boardState)
 
         for (move in moveTypes) {
             colLoop@for (nextColumn in 0 until numCols) {
@@ -122,6 +125,12 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
 
     private fun maxValue(boardState: List<List<Char>>, column: Int, moveType: MoveType,
                          maxDepth: Int, isAgent: Boolean = true): Int {
+        val winnerStatus = checkWinner(boardState)
+        if (winnerStatus.first && winnerStatus.second == 'Y')
+            return -10000
+        else if (winnerStatus.first || maxDepth == 0)
+            return evaluateBoard(boardState)
+
         var bestValue = Int.MIN_VALUE
         val newBoard = boardState.toMutableList()
         val newColumn = when (moveType) {
@@ -140,9 +149,6 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
             }
         }
         newBoard[column] = newColumn
-
-        if (checkWinner(boardState).first || maxDepth == 0)
-            return evaluateBoard(boardState)
 
         for (move in moveTypes) {
             colLoop@for (nextColumn in 0 until numCols) {
@@ -166,70 +172,84 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
 
     private fun evaluateBoard(boardState: List<List<Char>>): Int {
         val scoreMap = mutableMapOf<Int, Int>()
+        val newBoard = boardState.map { it.toMutableList() }
 
-        // Check horizontal
-        for (row in 0 until numRows) {
-            for (col in 0..numCols - lengthToWin) {
-                val tokenList = (0 until lengthToWin).map { add -> boardState[col + add][row] }
-                when {
-                    tokenList.all { it == 'Y' } -> return -10000
-                    tokenList.count { it == 'X' } == lengthToWin - 1 && tokenList.count { it == '.'} == 1 ->
-                        scoreMap[lengthToWin - 1] = scoreMap.getOrDefault(lengthToWin - 1, 0) + 100
-                    else -> {
-                        val length = tokenList.count { it == 'X' }
+//        for (i in 0 until numRows) {
+//            print("$i ")
+//            for (j in 0 until numCols) {
+//                print("${newBoard[j][i]} ")
+//            }
+//            println("")
+//        }
+//        println("  ${(0 until numCols).joinToString(separator = " ")}")
+
+        for (length in lengthToWin downTo 2) {
+            // Check horizontal
+            for (row in 0 until numRows) {
+                for (col in 0..numCols - length) {
+                    val tokenList = (0 until length).map { add -> newBoard[col + add][row] }
+                    if (tokenList.count { it == 'X' } == length) {
                         scoreMap[length] = scoreMap.getOrDefault(length, 0) + 1
+                        (0 until length).forEach { add -> newBoard[col + add][row] = '.' }
+                    }
+                }
+            }
+
+            // Check Vertical
+            for (col in 0 until numCols) {
+                for (row in 0..numRows - length) {
+                    val tokenList = newBoard[col].slice(row until (row + length))
+                    if (tokenList.count { it == 'X' } == length) {
+                        scoreMap[length] = scoreMap.getOrDefault(length, 0) + 1
+                        (row until (row + length)).forEach { newBoard[col][it] = '.' }
+                    }
+                }
+            }
+
+            // Check forward slash diagonal
+            for (col in 0..numCols - length) {
+                for (row in 0..numRows - length) {
+                    val tokenList = (0 until length).map { add -> newBoard[col + add][row + add] }
+                    if (tokenList.count { it == 'X' } == length) {
+                        scoreMap[length] = scoreMap.getOrDefault(length, 0) + 1
+                        (0 until length).forEach { add ->
+                            newBoard[col + add][row + add] = '.'
+                        }
+                    }
+                }
+            }
+
+            // Check backslash diagonal
+            for (col in (numCols - length) until numCols) {
+                for (row in 0..numRows - length) {
+                    val tokenList = (0 until length).map { add -> newBoard[col - add][row + add] }
+                    if (tokenList.count { it == 'X' } == length) {
+                        scoreMap[length] = scoreMap.getOrDefault(length, 0) + 1
+                        (0 until length).forEach { add ->
+                            newBoard[col - add][row + add] = '.'
+                        }
                     }
                 }
             }
         }
 
-        // Check Vertical
-        for (col in 0 until numCols) {
-            for (row in 0..numRows - lengthToWin) {
-                val tokenList = boardState[col].slice(row until (row + lengthToWin))
-                when {
-                    tokenList.all { it == 'Y' } -> return -10000
-                    tokenList.count { it == 'X' } == lengthToWin - 1 && tokenList.count { it == '.'} == 1 ->
-                        scoreMap[lengthToWin - 1] = scoreMap.getOrDefault(lengthToWin - 1, 0) + 100
-                    else -> {
-                        val length = tokenList.count { it == 'X' }
-                        scoreMap[length] = scoreMap.getOrDefault(length, 0) + 1
-                    }
-                }
-            }
-        }
-
-        // Check forward slash diagonal
-        for (col in 0..numCols - lengthToWin) {
-            for (row in 0..numRows - lengthToWin) {
-                val tokenList = (0 until lengthToWin).map { add -> boardState[col + add][row + add] }
-                when {
-                    tokenList.all { it == 'Y' } -> return -10000
-                    tokenList.count { it == 'X' } == lengthToWin - 1 && tokenList.count { it == '.'} == 1 ->
-                        scoreMap[lengthToWin - 1] = scoreMap.getOrDefault(lengthToWin - 1, 0) + 100
-                    else -> {
-                        val length = tokenList.count { it == 'X' }
-                        scoreMap[length] = scoreMap.getOrDefault(length, 0) + 1
-                    }
-                }
-            }
-        }
-
-        // Check backslash diagonal
-        for (col in (numCols - lengthToWin) until numCols) {
-            for (row in 0..numRows - lengthToWin) {
-                val tokenList = (0 until lengthToWin).map { add -> boardState[col - add][row + add] }
-                when {
-                    tokenList.all { it == 'Y' } -> return -10000
-                    tokenList.count { it == 'X' } == lengthToWin - 1 && tokenList.count { it == '.'} == 1 ->
-                        scoreMap[lengthToWin - 1] = scoreMap.getOrDefault(lengthToWin - 1, 0) + 100
-                    else -> {
-                        val length = tokenList.count { it == 'X' }
-                        scoreMap[length] = scoreMap.getOrDefault(length, 0) + 1
-                    }
-                }
-            }
-        }
+//        for (i in 0 until numRows) {
+//            print("$i ")
+//            for (j in 0 until numCols) {
+//                print("${newBoard[j][i]} ")
+//            }
+//            println("")
+//        }
+//        println("  ${(0 until numCols).joinToString(separator = " ")}")
+//
+//        println(scoreMap.toList().fold(0) { acc, (key, value) ->
+//            when (key == lengthToWin) {
+//                true -> acc + (key * key * value) * 10000
+//                false -> acc + (key * key * value)
+//            }
+//        })
+//
+//        println("------------------------------------------------------")
 
         return scoreMap.toList().fold(0) { acc, (key, value) ->
             when (key == lengthToWin) {
