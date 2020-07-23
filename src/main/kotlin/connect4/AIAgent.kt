@@ -79,9 +79,6 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
 
     private fun minValue(boardState: List<List<Char>>, column: Int, moveType: MoveType,
                          maxDepth: Int, isAgent: Boolean = true): Int {
-        if (boardState.all { col -> col.count { it == '.' } == 0 } || maxDepth == 0)
-            return evaluateBoard(boardState)
-
         var bestValue = Int.MAX_VALUE
         val newBoard = boardState.toMutableList()
         val newColumn = when (moveType) {
@@ -100,6 +97,9 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
             }
         }
         newBoard[column] = newColumn
+
+        if (checkWinner(boardState).first || maxDepth == 0)
+            return evaluateBoard(boardState)
 
         for (move in moveTypes) {
             colLoop@for (nextColumn in 0 until numCols) {
@@ -122,9 +122,6 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
 
     private fun maxValue(boardState: List<List<Char>>, column: Int, moveType: MoveType,
                          maxDepth: Int, isAgent: Boolean = true): Int {
-        if (boardState.all { col -> col.count { it == '.' } == 0 } || maxDepth == 0)
-            return evaluateBoard(boardState)
-
         var bestValue = Int.MIN_VALUE
         val newBoard = boardState.toMutableList()
         val newColumn = when (moveType) {
@@ -143,6 +140,9 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
             }
         }
         newBoard[column] = newColumn
+
+        if (checkWinner(boardState).first || maxDepth == 0)
+            return evaluateBoard(boardState)
 
         for (move in moveTypes) {
             colLoop@for (nextColumn in 0 until numCols) {
@@ -237,5 +237,56 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
                 false -> acc + (key * key * value)
             }
         }
+    }
+
+    private fun checkWinner(boardState: List<List<Char>>): Pair<Boolean, Char> {
+        // Check Horizontal
+        for (row in 0 until numRows) {
+            for (col in 0..numCols - lengthToWin) {
+                val player = boardState[col][row]
+                if (player == '.') continue
+                else if ((0 until lengthToWin).map { add -> boardState[col + add][row] }.all { it == player })
+                    return Pair(true, player)
+            }
+        }
+
+        // Check Vertical
+        for (col in 0 until numCols) {
+            for (row in 0..numRows - lengthToWin) {
+                val player = boardState[col][row]
+                if (player == '.') continue
+                else if (boardState[col].slice(row until (row + lengthToWin)).all { it == player })
+                    return Pair(true, player)
+            }
+        }
+
+        // Check forward slash diagonal
+        for (col in 0..numCols - lengthToWin) {
+            for (row in 0..numRows - lengthToWin) {
+                val player = boardState[col][row]
+                if (player == '.') continue
+                else if ((0 until lengthToWin).map { add -> boardState[col + add][row + add] }.all { it == player })
+                    return Pair(true, player)
+            }
+        }
+
+        // Check backslash diagonal
+        for (col in (numCols - lengthToWin + (1 - numCols % 2)) until numCols) {
+            for (row in 0..numRows - lengthToWin) {
+                val player = boardState[col][row]
+                if (player == '.') continue
+                else if ((0 until lengthToWin).map { add -> boardState[col - add][row + add] }.all { it == player })
+                    return Pair(true, player)
+            }
+        }
+
+        // Check tie
+        if (!popOut) {
+            if (boardState.all { col -> col.count { row -> row == '.' } == 0 })
+                return Pair(true, '.')
+        }
+
+        // No winner found
+        return Pair(false, '.')
     }
 }
