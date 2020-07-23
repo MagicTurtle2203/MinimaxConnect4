@@ -2,97 +2,190 @@ package connect4
 
 fun todo(): Nothing = TODO("Fix checkWinner function for diagonal case")
 
-class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, private val player: Players)
+class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, private val player: Players,
+              private val maxDepth: Int)
     : AI(numCols, numRows, lengthToWin, popOut) {
     private val opponent = when (player) {
         Players.X -> Players.Y
         Players.Y -> Players.X
         else -> throw SomethingWentWrong("Agent should not be NONE")
     }
+    private val moveTypes = mutableListOf(MoveType.DROP)
+    init {
+        if (popOut) moveTypes.add(MoveType.POP)
+    }
 
     override fun getMove(boardState: List<List<Char>>): Move {
         when (player) {
             Players.X -> {
                 // max of minValue
-                var bestColumn = 0
+                var bestMove = Move(MoveType.DROP, 0)
                 var bestValue = Int.MIN_VALUE
 
-                for (column in 0 until numCols) {
-                    val received = minValue(boardState, column, 4)
-//                    println("received: $received, bestValue: $bestValue, bestColumn: $bestColumn")
-                    if (received > bestValue) {
-                        bestColumn = column
-                        bestValue = received
+                for (move in moveTypes) {
+                    colLoop@for (column in 0 until numCols) {
+                         when (move) {
+                            MoveType.DROP -> {
+                                if (boardState[column].count { it == '.' } == 0)
+                                    continue@colLoop
+                            }
+                            MoveType.POP -> {
+                                if (boardState[column].last() != player.token)
+                                    continue@colLoop
+                            }
+                        }
+                        val received = minValue(boardState, column, move, maxDepth)
+                        if (received > bestValue) {
+                            bestMove = Move(move, column)
+                            bestValue = received
+                        }
                     }
                 }
-                println("DROP $bestColumn")
-                return Move(MoveType.DROP, bestColumn)
+
+                println("$bestMove")
+                return bestMove
             }
             Players.Y -> {
                 // min of maxValue
-                var bestColumn = 0
+                var bestMove = Move(MoveType.DROP, 0)
                 var bestValue = Int.MAX_VALUE
 
-                for (column in 0 until numCols) {
-                    val received = maxValue(boardState, column, 4)
-//                    println("received: $received, bestValue: $bestValue, bestColumn: $bestColumn")
-                    if (received < bestValue) {
-                        bestColumn = column
-                        bestValue = received
+                for (move in moveTypes) {
+                    colLoop@for (column in 0 until numCols) {
+                         when (move) {
+                            MoveType.DROP -> {
+                                if (boardState[column].count { it == '.' } == 0)
+                                    continue@colLoop
+                            }
+                            MoveType.POP -> {
+                                if (boardState[column].last() != player.token)
+                                    continue@colLoop
+                            }
+                        }
+                        val received = maxValue(boardState, column, move, maxDepth)
+                        if (received < bestValue) {
+                            bestMove = Move(move, column)
+                            bestValue = received
+                        }
                     }
                 }
-                println("DROP $bestColumn")
-                return Move(MoveType.DROP, bestColumn)
+
+                println("$bestMove")
+                return bestMove
             }
             else -> throw SomethingWentWrong("Agent shouldn't be NONE")
         }
     }
 
-    private fun minValue(boardState: List<List<Char>>, column: Int,
+    private fun minValue(boardState: List<List<Char>>, column: Int, moveType: MoveType,
                          maxDepth: Int, isAgent: Boolean = true): Int {
         if (boardState.all { col -> col.count { it == '.' } == 0 } || maxDepth == 0)
             return evaluateBoard(boardState)
-        if (boardState[column].count { it == '.' } == 0)
-            return Int.MIN_VALUE
+
+        println("MIN move: ($moveType, $column)")
 
         var bestValue = Int.MAX_VALUE
-
         val newBoard = boardState.toMutableList()
-        val rowIndex = newBoard[column].lastIndexOf('.')
-        newBoard[column] = newBoard[column].mapIndexed { index, c ->
-            when (index == rowIndex) {
-                true -> if (isAgent) player.token else opponent.token
-                false -> c
+        val newColumn = when (moveType) {
+            MoveType.DROP -> {
+                val nc = newBoard[column].toMutableList()
+                println(nc)
+                nc[nc.lastIndexOf('.')] = if (isAgent) player.token else opponent.token
+                nc
+            }
+            MoveType.POP -> {
+                 List(numRows) { '.' }.mapIndexed { index, c ->
+                    when (index > 0) {
+                        true -> newBoard[column][index - 1]
+                        false -> c
+                    }
+                }
             }
         }
+        newBoard[column] = newColumn
 
-        for (nextColumn in 0 until numCols)
-            bestValue = minOf(bestValue, maxValue(newBoard, nextColumn, maxDepth - 1, !isAgent))
+        for (i in 0 until numRows) {
+            print("$i ")
+            for (j in 0 until numCols) {
+                print("${newBoard[j][i]} ")
+            }
+            println("")
+        }
+        println("  ${(0 until numCols).joinToString(separator = " ")}")
 
+        for (move in moveTypes) {
+            colLoop@for (nextColumn in 0 until numCols) {
+                when (move) {
+                    MoveType.DROP -> {
+                        if (newBoard[nextColumn].count { it == '.' } == 0)
+                            continue@colLoop
+                    }
+                    MoveType.POP -> {
+                        if (newBoard[nextColumn].last() != player.token)
+                            continue@colLoop
+                    }
+                }
+                bestValue = minOf(bestValue,
+                        maxValue(newBoard, nextColumn, move, maxDepth - 1, !isAgent))
+            }
+        }
         return bestValue
     }
 
-    private fun maxValue(boardState: List<List<Char>>, column: Int,
+    private fun maxValue(boardState: List<List<Char>>, column: Int, moveType: MoveType,
                          maxDepth: Int, isAgent: Boolean = true): Int {
         if (boardState.all { col -> col.count { it == '.' } == 0 } || maxDepth == 0)
             return evaluateBoard(boardState)
-        if (boardState[column].count { it == '.' } == 0)
-            return Int.MAX_VALUE
+
+        println("MAX move: ($moveType, $column)")
 
         var bestValue = Int.MIN_VALUE
-
         val newBoard = boardState.toMutableList()
-        val rowIndex = newBoard[column].lastIndexOf('.')
-        newBoard[column] = newBoard[column].mapIndexed { index, c ->
-            when (index == rowIndex) {
-                true -> if (isAgent) player.token else opponent.token
-                false -> c
+        val newColumn = when (moveType) {
+            MoveType.DROP -> {
+                val nc = newBoard[column].toMutableList()
+                println(nc)
+                nc[nc.lastIndexOf('.')] = if (isAgent) player.token else opponent.token
+                nc
+            }
+            MoveType.POP -> {
+                List(numRows) { '.' }.mapIndexed { index, c ->
+                    when (index > 0) {
+                        true -> newBoard[column][index - 1]
+                        false -> c
+                    }
+                }
             }
         }
+        newBoard[column] = newColumn
 
-        for (nextColumn in 0 until numCols)
-            bestValue = maxOf(bestValue, minValue(newBoard, nextColumn, maxDepth - 1, !isAgent))
+        for (i in 0 until numRows) {
+            print("$i ")
+            for (j in 0 until numCols) {
+                print("${newBoard[j][i]} ")
+            }
+            println("")
+        }
+        println("  ${(0 until numCols).joinToString(separator = " ")}")
 
+        for (move in moveTypes) {
+            colLoop@for (nextColumn in 0 until numCols) {
+                when (move) {
+                    MoveType.DROP -> {
+                        if (newBoard[nextColumn].count { it == '.' } == 0) {
+                            println("GOT HERE")
+                            continue@colLoop
+                        }
+                    }
+                    MoveType.POP -> {
+                        if (newBoard[nextColumn].last() != player.token)
+                            continue@colLoop
+                    }
+                }
+                bestValue = maxOf(bestValue,
+                        minValue(newBoard, nextColumn, move,maxDepth - 1, !isAgent))
+            }
+        }
         return bestValue
     }
 
