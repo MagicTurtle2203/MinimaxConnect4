@@ -82,14 +82,11 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
         if (boardState.all { col -> col.count { it == '.' } == 0 } || maxDepth == 0)
             return evaluateBoard(boardState)
 
-        println("MIN move: ($moveType, $column)")
-
         var bestValue = Int.MAX_VALUE
         val newBoard = boardState.toMutableList()
         val newColumn = when (moveType) {
             MoveType.DROP -> {
                 val nc = newBoard[column].toMutableList()
-                println(nc)
                 nc[nc.lastIndexOf('.')] = if (isAgent) player.token else opponent.token
                 nc
             }
@@ -103,15 +100,6 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
             }
         }
         newBoard[column] = newColumn
-
-        for (i in 0 until numRows) {
-            print("$i ")
-            for (j in 0 until numCols) {
-                print("${newBoard[j][i]} ")
-            }
-            println("")
-        }
-        println("  ${(0 until numCols).joinToString(separator = " ")}")
 
         for (move in moveTypes) {
             colLoop@for (nextColumn in 0 until numCols) {
@@ -137,14 +125,11 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
         if (boardState.all { col -> col.count { it == '.' } == 0 } || maxDepth == 0)
             return evaluateBoard(boardState)
 
-        println("MAX move: ($moveType, $column)")
-
         var bestValue = Int.MIN_VALUE
         val newBoard = boardState.toMutableList()
         val newColumn = when (moveType) {
             MoveType.DROP -> {
                 val nc = newBoard[column].toMutableList()
-                println(nc)
                 nc[nc.lastIndexOf('.')] = if (isAgent) player.token else opponent.token
                 nc
             }
@@ -159,21 +144,11 @@ class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean, pri
         }
         newBoard[column] = newColumn
 
-        for (i in 0 until numRows) {
-            print("$i ")
-            for (j in 0 until numCols) {
-                print("${newBoard[j][i]} ")
-            }
-            println("")
-        }
-        println("  ${(0 until numCols).joinToString(separator = " ")}")
-
         for (move in moveTypes) {
             colLoop@for (nextColumn in 0 until numCols) {
                 when (move) {
                     MoveType.DROP -> {
                         if (newBoard[nextColumn].count { it == '.' } == 0) {
-                            println("GOT HERE")
                             continue@colLoop
                         }
                     }
