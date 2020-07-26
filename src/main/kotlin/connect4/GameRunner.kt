@@ -60,6 +60,7 @@ class GameRunner(mode: Modes, boardCols: Int, boardRows: Int, lengthToWin: Int =
                     Players.Y -> println("Player 2 Wins")
                     Players.NONE -> println("Tie")
                 }
+                break
             }
             turn = turn % 2 + 1
         }
