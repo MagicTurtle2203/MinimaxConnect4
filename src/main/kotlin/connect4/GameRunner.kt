@@ -24,29 +24,32 @@ class GameRunner(mode: Modes, boardCols: Int, boardRows: Int, lengthToWin: Int =
         }
     }
 
-    fun run(): Players {
+    fun run() {
         board.displayBoard()
 
         var turn = 1
         while (true) {
-            val move = when (turn % 2) {
-                1 -> {
-                    println("Player 1's Turn")
-                    player1.getMove(board.board)
-                }
-                0 -> {
-                    println("Player 2's Turn")
-                    player2.getMove(board.board)
-                }
-                else -> throw SomethingWentWrong("Modulo 2 should only give 1 or 0")
-            }
             try {
+                val move = when (turn % 2) {
+                    1 -> {
+                        println("Player 1's Turn")
+                        player1.getMove(board.board)
+                    }
+                    0 -> {
+                        println("Player 2's Turn")
+                        player2.getMove(board.board)
+                    }
+                    else -> throw SomethingWentWrong("Modulo 2 should only give 1 or 0")
+                }
                 when (move.moveType) {
                     MoveType.DROP -> board.drop(move.columnIndex)
                     MoveType.POP -> board.pop(move.columnIndex)
                 }
             } catch (e: InvalidMoveException) {
                 println("Invalid move: ${e.message}")
+            } catch (e: ExitGame) {
+                println("Exiting...")
+                break
             }
             board.displayBoard()
 
@@ -57,7 +60,6 @@ class GameRunner(mode: Modes, boardCols: Int, boardRows: Int, lengthToWin: Int =
                     Players.Y -> println("Player 2 Wins")
                     Players.NONE -> println("Tie")
                 }
-                return winner
             }
             turn = turn % 2 + 1
         }
