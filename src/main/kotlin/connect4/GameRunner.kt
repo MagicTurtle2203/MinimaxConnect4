@@ -18,8 +18,8 @@ class GameRunner(mode: Modes, boardCols: Int, boardRows: Int, lengthToWin: Int =
                 player2 = PlayerAgent(boardCols, boardRows, lengthToWin, popOut)
             }
             Modes.AIONLY -> {
-                player1 = AIAgent(boardCols, boardRows, lengthToWin, popOut, Players.X)
-                player2 = AIAgent(boardCols, boardRows, lengthToWin, popOut, Players.Y)
+                player1 = AIAgent(boardCols, boardRows, lengthToWin, popOut, Players.X, 2)
+                player2 = AIAgent(boardCols, boardRows, lengthToWin, popOut, Players.Y, 4)
             }
         }
     }
@@ -47,7 +47,6 @@ class GameRunner(mode: Modes, boardCols: Int, boardRows: Int, lengthToWin: Int =
                 }
             } catch (e: InvalidMoveException) {
                 println("Invalid move: ${e.message}")
-                continue
             }
             board.displayBoard()
 
