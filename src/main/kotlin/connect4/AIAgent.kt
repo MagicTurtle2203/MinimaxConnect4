@@ -1,8 +1,8 @@
 package connect4
 
-class AIAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean,
-              private val player: Players, private val maxDepth: Int = 4)
-    : AI(numCols, numRows, lengthToWin, popOut) {
+class AIAgent(private val numCols: Int, private val numRows: Int,
+              private val lengthToWin: Int, private val popOut: Boolean,
+              private val player: Players, private val maxDepth: Int = 4) : AI {
     private val opponent = when (player) {
         Players.X -> Players.Y
         Players.Y -> Players.X

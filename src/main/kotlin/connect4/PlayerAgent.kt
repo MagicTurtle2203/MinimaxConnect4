@@ -3,8 +3,8 @@ package connect4
 import java.lang.NumberFormatException
 import kotlin.io.readLine
 
-class PlayerAgent(numCols: Int, numRows: Int, lengthToWin: Int, popOut: Boolean)
-    : AI(numCols, numRows, lengthToWin, popOut) {
+class PlayerAgent(private val numCols: Int, private val numRows: Int,
+                  private val lengthToWin: Int, private val popOut: Boolean) : AI {
     override fun getMove(boardState: List<List<Char>>): Move {
         val moveType: MoveType
         val columnNumber: Int
